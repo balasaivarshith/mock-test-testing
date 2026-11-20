@@ -24,7 +24,11 @@ jobs:
 
       - name: Test Cloudways Connection
         run: |
-          ssh -i ~/.ssh/mock-test_deploy \
+          timeout 20s ssh -T \
+            -i ~/.ssh/mock-test_deploy \
             -o BatchMode=yes \
+            -o ConnectTimeout=10 \
+            -o ServerAliveInterval=5 \
+            -o ServerAliveCountMax=2 \
             ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }} \
-            'echo "SSH connection successful"; whoami; hostname'
+            'echo "SSH connection successful"; whoami; hostname; exit'
