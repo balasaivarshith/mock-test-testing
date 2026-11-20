@@ -11,13 +11,13 @@ jobs:
     steps:
       - name: Configure SSH
         env:
-          SSH_KEY: ${{ secrets.CLOUDWAYS_SSH_KEY }}
+          SSH_KEY_B64: ${{ secrets.CLOUDWAYS_SSH_KEY }}
           HOST: ${{ secrets.CLOUDWAYS_HOST }}
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/mock-test_deploy
+          printf '%s' "$SSH_KEY_B64" | base64 --decode > ~/.ssh/mock-test_deploy
           chmod 600 ~/.ssh/mock-test_deploy
 
           ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
