@@ -1,0 +1,30 @@
+
+name: Test Cloudways SSH Connection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-ssh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.CLOUDWAYS_SSH_KEY }}
+          HOST: ${{ secrets.CLOUDWAYS_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/mock-test_deploy
+          chmod 600 ~/.ssh/mock-test_deploy
+
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
+
+      - name: Test Cloudways Connection
+        run: |
+          ssh -i ~/.ssh/mock-test_deploy \
+            -o BatchMode=yes \
+            ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }} \
+            'echo "SSH connection successful"; whoami; hostname'
