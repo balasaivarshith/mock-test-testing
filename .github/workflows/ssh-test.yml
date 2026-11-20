@@ -32,3 +32,18 @@ jobs:
             -o ServerAliveCountMax=2 \
             ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }} \
             'echo "SSH connection successful"; whoami; hostname; exit'
+
+      - name: Test Mock Test Folder Write Access
+        env:
+          HOST: ${{ secrets.CLOUDWAYS_HOST }}
+          USER: ${{ secrets.CLOUDWAYS_USER }}
+        run: |
+          ssh -T -i ~/.ssh/mock-test_deploy \
+            -o BatchMode=yes \
+            "$USER@$HOST" \
+            'set -e
+             cd /home/master/applications/kdqypjmcqc/public_html/mock-test
+             echo "GitHub Actions deployment test" > github-actions-test.txt
+             cat github-actions-test.txt
+             rm github-actions-test.txt
+             echo "Folder write test successful"'
